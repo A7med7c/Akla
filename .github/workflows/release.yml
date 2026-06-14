@@ -28,20 +28,19 @@ jobs:
           name: api-artifact
           path: ${{env.DOTNET_ROOT}}/api
 
-
- deploy-dev:
-  needs: build
-  runs-on: ubuntu-latest
-  steps:
-    - name: Download a Build Artifact
-      uses: actions/download-artifact@v4
-      with:
-        name: api-artifact
-
-    - name: Azure WebApp
-      uses: Azure/webapps-deploy@v3
-      with:
-        app-name: 'Akla-api-dev'
-        publish-profile: ${{ secrets.PUBLISH_PROFILE_DEV }}
+   deploy-dev:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download a Build Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: api-artifact
+  
+      - name: Azure WebApp
+        uses: Azure/webapps-deploy@v3
+        with:
+          app-name: 'Akla-api-dev'
+          publish-profile: ${{ secrets.PUBLISH_PROFILE_DEV }}
                 
 

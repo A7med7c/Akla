@@ -11,24 +11,29 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v6.0.3
+        uses: actions/checkout@v4
+
       - name: Setup .NET Core SDK
-        uses: actions/setup-dotnet@v5.3.0
+        uses: actions/setup-dotnet@v4
         with:
           dotnet-version: 9.0.x
+
       - name: Restore dependencies
         run: dotnet restore
+
       - name: Build
         run: dotnet build --no-restore -c Release
+
       - name: Publish
-        run: dotnet publish ./Restaurants.Api/Restaurants.Api.csproj --no-build -o ${{env.DOTNET_ROOT}}/api
+        run: dotnet publish ./Restaurants.Api/Restaurants.Api.csproj --no-build -o ${{ env.DOTNET_ROOT }}/api
+
       - name: Upload a Build Artifact
-        uses: actions/upload-artifact@v7.0.1
+        uses: actions/upload-artifact@v4
         with:
           name: api-artifact
-          path: ${{env.DOTNET_ROOT}}/api
+          path: ${{ env.DOTNET_ROOT }}/api
 
-   deploy-dev:
+  deploy-dev:
     needs: build
     runs-on: ubuntu-latest
     steps:
@@ -36,11 +41,9 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: api-artifact
-  
+
       - name: Azure WebApp
         uses: Azure/webapps-deploy@v3
         with:
-          app-name: 'Akla-api-dev'
+          app-name: Akla-api-dev
           publish-profile: ${{ secrets.PUBLISH_PROFILE_DEV }}
-                
-

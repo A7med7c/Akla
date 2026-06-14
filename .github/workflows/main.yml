@@ -1,7 +1,5 @@
-name: Akla-api
+name: Akla-api-ci
 on: 
-  push:
-    branches: [ master ]
   pull_request:  
     branches:
       - master

@@ -368,3 +368,35 @@ MigrationBackup/
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
 .kilo/Rules.md
+
+# --------------------------------------------------
+
+# Publish Output
+
+# --------------------------------------------------
+
+api/
+
+# Alternative publish folders
+
+publish/
+Publish/
+artifacts/
+
+# ASP.NET publish output
+
+*.runtimeconfig.json
+*.deps.json
+
+# Docker generated files
+
+docker-compose.override.yml
+
+# Logs
+
+*.log
+
+# OS files
+
+.DS_Store
+Thumbs.db

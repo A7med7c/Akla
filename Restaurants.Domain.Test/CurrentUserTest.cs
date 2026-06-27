@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Moq;
-
+using Restaurants.Application.Users;
 using Restaurants.Domain.Constants;
 using System.Security.Claims;
 namespace Restaurants.Domain.Test
@@ -32,7 +32,7 @@ namespace Restaurants.Domain.Test
                                    User = user
                                });
 
-            var userContext = new Application.Users.UserContext(httpContextAccessorMock.Object);
+            var userContext = new UserContext(httpContextAccessorMock.Object);
 
             //act 
 
@@ -43,6 +43,23 @@ namespace Restaurants.Domain.Test
             Assert.Equal("1", currentUser.Id);
             Assert.Equal("test@test.com", currentUser.Email);
             Assert.Contains(UserRoles.Admin, currentUser.Roles.First());
+        }
+
+        [Fact]
+        public void GetCurrentUser_WithNullValue_SholudthrowInvalidOperationException()
+        {
+
+            //Arrange 
+            var httpContextAccessorMock = new Mock<IHttpContextAccessor>();
+
+
+            httpContextAccessorMock.Setup(x => x.HttpContext)
+                               .Returns((HttpContext)null);
+
+            var userContext = new UserContext(httpContextAccessorMock.Object);
+
+            //assert
+            Assert.Throws<InvalidOperationException>(() => userContext.GetCurrentUser());
         }
     }
 }

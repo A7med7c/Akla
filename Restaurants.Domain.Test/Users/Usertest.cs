@@ -1,7 +1,7 @@
 using Restaurants.Application.Users;
 using Restaurants.Domain.Constants;
 
-namespace Restaurants.Domain.Test
+namespace Restaurants.Domain.Test.Users
 {
     public class Usertest
     {

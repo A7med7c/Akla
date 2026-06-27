@@ -3,7 +3,7 @@ using Moq;
 using Restaurants.Application.Users;
 using Restaurants.Domain.Constants;
 using System.Security.Claims;
-namespace Restaurants.Domain.Test
+namespace Restaurants.Domain.Test.Users
 {
     public class CurrentUserTest
     {

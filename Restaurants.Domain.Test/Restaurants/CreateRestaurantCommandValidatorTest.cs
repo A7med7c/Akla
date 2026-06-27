@@ -1,7 +1,7 @@
 ﻿using FluentValidation.TestHelper;
 using Restaurants.Application.Restaurants.Commands.CreateRestaurant;
 
-namespace Restaurants.Domain.Test
+namespace Restaurants.Domain.Test.Restaurants
 {
     public class CreateRestaurantCommandValidatorTest
     {

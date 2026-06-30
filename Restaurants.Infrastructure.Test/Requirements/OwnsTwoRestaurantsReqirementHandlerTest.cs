@@ -6,18 +6,23 @@ using Restaurants.Infrastructure.Authorization.Requirements.OwnsTwoRestaurants;
 
 namespace Restaurants.Infrastructure.Test.Requirements
 {
+
+
     public class OwnsTwoRestaurantsReqirementHandlerTest
     {
+        private readonly Mock<IRestaurantsRepository> restaurantRepositoryMock;
+        private readonly Mock<IUserContext> userContextMock;
+        public OwnsTwoRestaurantsReqirementHandlerTest()
+        {
+            restaurantRepositoryMock = new Mock<IRestaurantsRepository>();
+            userContextMock = new Mock<IUserContext>();
+        }
         [Fact]
         public async Task HandleRequirementAsync_UserHasNotCreateMoreThanTwoRestaurants_ShouldFail()
         {
-            var restaurantRepositoryMock = new Mock<IRestaurantsRepository>();
 
             var currentUser = new CurrentUser("1", "test@test.com", [], null, null);
-
-            var userContexrMock = new Mock<IUserContext>();
-
-            userContexrMock.Setup(u => u.GetCurrentUser()).Returns(currentUser);
+            userContextMock.Setup(u => u.GetCurrentUser()).Returns(currentUser);
 
             var restaurants = new List<Restaurant>()
             {
@@ -28,25 +33,29 @@ namespace Restaurants.Infrastructure.Test.Requirements
             restaurantRepositoryMock.Setup(r => r.GetAllAsync()).ReturnsAsync(restaurants);
 
             var requirements = new OwnsTwoRestaurantsReqirement(2);
-            var handler = new OwnsTwoRestaurantsReqirementHandler(restaurantRepositoryMock.Object, userContexrMock.Object);
+            var handler = new OwnsTwoRestaurantsReqirementHandler(restaurantRepositoryMock.Object, userContextMock.Object);
             var context = new AuthorizationHandlerContext([requirements], null, null);
 
-            //act 
+            // Act
+
             await handler.HandleAsync(context);
 
-            context.Fail();
+            // Assert
+
+            Assert.False(context.HasSucceeded);
+
+            restaurantRepositoryMock.Verify(r => r.GetAllAsync(), Times.Once);
+
+            userContextMock.Verify(u => u.GetCurrentUser(), Times.Once);
         }
 
         [Fact]
-        public async Task HandleRequirementAsync_UserHasCreatedMoreThanTwoRestaurants_ShoulSucceded()
+        public async Task HandleRequirementAsync_UserHasCreatedMoreThanTwoRestaurants_ShouldSucceded()
         {
-            var restaurantRepositoryMock = new Mock<IRestaurantsRepository>();
 
             var currentUser = new CurrentUser("1", "test@test.com", [], null, null);
 
-            var userContexrMock = new Mock<IUserContext>();
-
-            userContexrMock.Setup(u => u.GetCurrentUser()).Returns(currentUser);
+            userContextMock.Setup(u => u.GetCurrentUser()).Returns(currentUser);
 
             var restaurants = new List<Restaurant>()
             {
@@ -58,11 +67,17 @@ namespace Restaurants.Infrastructure.Test.Requirements
             restaurantRepositoryMock.Setup(r => r.GetAllAsync()).ReturnsAsync(restaurants);
 
             var requirements = new OwnsTwoRestaurantsReqirement(2);
-            var handler = new OwnsTwoRestaurantsReqirementHandler(restaurantRepositoryMock.Object, userContexrMock.Object);
+            var handler = new OwnsTwoRestaurantsReqirementHandler(restaurantRepositoryMock.Object, userContextMock.Object);
             var context = new AuthorizationHandlerContext([requirements], null, null);
 
 
-            context.Succeed(requirements);
+            await handler.HandleAsync(context);
+
+            Assert.True(context.HasSucceeded);
+
+            restaurantRepositoryMock.Verify(r => r.GetAllAsync(), Times.Once);
+
+            userContextMock.Verify(u => u.GetCurrentUser(), Times.Once);
         }
     }
 }

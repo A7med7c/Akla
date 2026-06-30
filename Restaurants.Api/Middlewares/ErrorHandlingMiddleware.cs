@@ -1,6 +1,6 @@
 ﻿
-using System.Text.Json;
 using Restaurants.Domain.Exceptions;
+using System.Text.Json;
 
 namespace Restaurants.Api.Middlewares;
 

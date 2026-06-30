@@ -14,8 +14,7 @@ namespace Restaurants.Domain.Test.Restaurants
                 Name = "test",
                 Category = "Italian",
                 ContactEmail = "test@test.com",
-                PostalCode = "12-345",
-                Description = "New Description for a restaurant"
+                PostalCode = "12-345"
             };
             var validator = new CreateRestaurantCommandValidator();
 

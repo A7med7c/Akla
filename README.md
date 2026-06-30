@@ -18,6 +18,8 @@ A Clean Architecture ASP.NET Core Web API for managing restaurants, dishes, cart
 - Global error handling middleware and request-time logging middleware.
 - Serilog logging configured for Console, File, and Application Insights sinks.
 - Startup seeding and automatic EF Core migration application via `RestaurantSeeder`.
+- Unit test coverage for API middleware, application validation/handlers, user context behavior, and infrastructure authorization requirements.
+- GitHub Actions CI/CD pipelines for pull request validation, release publishing, artifact upload, and Azure Web App deployment.
 
 ## Tech Stack
 
@@ -38,8 +40,8 @@ A Clean Architecture ASP.NET Core Web API for managing restaurants, dishes, cart
 | Swashbuckle.AspNetCore (Swagger)  | `8.1.1`                              |
 | Azure.Storage.Blobs               | `12.29.0-beta.1`                     |
 | Paymob                            | Payment gateway (custom integration) |
-| xUnit                             | `2.5.3`                              |
-| Microsoft.NET.Test.Sdk            | `17.8.0`                             |
+| xUnit v3 MTP                      | `3.2.2`                              |
+| Moq                               | `4.20.72`                            |
 
 ## Architecture
 
@@ -64,8 +66,10 @@ API → Application → Domain
 ├── Restaurants.Application/          # Application layer (CQRS handlers, validators, DTOs)
 ├── Restaurants.Domain/               # Domain layer (entities, contracts, constants, exceptions)
 ├── Restaurants.Infrastructure/       # Infrastructure layer (EF Core, repositories, auth, payments)
-├── Restaurants.Application.Tests/    # Unit tests for the application layer
-├── .github/workflows/                # CI/CD workflows (not yet configured)
+├── Restaurants.Api.Test/             # Unit tests for API middleware and presentation behavior
+├── Restaurants.Domain.Test/          # Unit tests for application/domain-facing behavior
+├── Restaurants.Infrastructure.Test/  # Unit tests for infrastructure authorization behavior
+├── .github/workflows/                # GitHub Actions CI/CD workflows
 ├── Restaurants.sln                   # Solution file
 └── README.md
 ```
@@ -203,15 +207,35 @@ docker run -p 8080:80 \
 
 ## CI/CD & Deployment
 
-- **CI/CD pipelines:** Not yet configured (`.github/workflows/` folder is present but empty).
-- **Azure deployment:** Not yet configured.
+GitHub Actions workflows are configured under `.github/workflows/`:
+
+- **CI (`main.yml`)**: runs on pull requests targeting `master` and on manual `workflow_dispatch`. The workflow restores dependencies, builds the solution, and runs `dotnet test`.
+- **CD (`release.yml`)**: runs on pushes to `master` and on manual `workflow_dispatch`. The workflow restores dependencies, builds in Release mode, publishes `Restaurants.Api`, uploads the API artifact, and deploys to the Azure Web App `Akla-api-dev` using the `PUBLISH_PROFILE_DEV` secret.
 - **Containerization:** `Dockerfile` present in `Restaurants.Api/` — see [Running with Docker](#running-with-docker) above.
 
 ## Running Tests
 
+Run all tests from the solution root:
+
 ```bash
-dotnet test Restaurants.Application.Tests/Restaurants.Application.Tests.csproj
+dotnet test
 ```
+
+Run a specific test project:
+
+```bash
+dotnet test Restaurants.Api.Test/Restaurants.Api.Test.csproj
+dotnet test Restaurants.Domain.Test/Restaurants.Application.Test.csproj
+dotnet test Restaurants.Infrastructure.Test/Restaurants.Infrastructure.Test.csproj
+```
+
+Current test coverage includes:
+
+- `ErrorHandlingMiddleware` success and exception mapping behavior.
+- `CreateRestaurantCommandValidator` valid and invalid command scenarios.
+- `CreateRestaurantCommandHandler` behavior.
+- `OwnsTwoRestaurantsReqirementHandler` authorization success and failure scenarios.
+- User and current-user context behavior.
 
 ## License
  
